@@ -1,0 +1,17 @@
+# Pulling the ubuntu image and version from a container registry
+FROM ubuntu:22.04
+# Upadte all the packages on the local machine
+RUN apt-get update 
+# install nginx to host the web server
+RUN apt-get install -y nginx zip curl
+
+RUN echo "daemon off;" >>/etc/nginx/nginx.conf
+# Run the file using the github link without cloning the repository content
+RUN curl -o /var/www/html/master.zip -L https://github.com/gabrielecirulli/2048/zip/master
+RUN cd /var/www/html/ && unzip master.zip && mv 2048-master/* . && rm -rf 2048-master master.zip
+
+# Expose the port 80 for the Docker container
+EXPOSE 80
+
+# Command to start Nginx
+CMD ["/usr/sbin/nginx", "-c", "/etc/nginx/nginx.conf"]
